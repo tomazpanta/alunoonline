@@ -23,3 +23,5 @@ public class Disciplina implements Serializable {
     @JoinColumn(name = "professor_id")
     private Professor professor;
 }
+
+//teste
