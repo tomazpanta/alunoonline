@@ -24,4 +24,3 @@ public class Disciplina implements Serializable {
     private Professor professor;
 }
 
-//teste
