@@ -1,4 +1,4 @@
-package br.com.alunoonline.api.controller.enums;
+package br.com.alunoonline.api.enums;
 
 public enum MatriculaAlunoStatusEnum {
     MATRICULADO,

@@ -1,6 +1,6 @@
 package br.com.alunoonline.api.model;
 
-import br.com.alunoonline.api.controller.enums.MatriculaAlunoStatusEnum;
+import br.com.alunoonline.api.enums.MatriculaAlunoStatusEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

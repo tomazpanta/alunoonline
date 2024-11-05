@@ -1,5 +1,6 @@
 package br.com.alunoonline.api.controller;
 
+import br.com.alunoonline.api.dtos.AtualizarNotasRequest;
 import br.com.alunoonline.api.model.MatriculaAluno;
 import br.com.alunoonline.api.service.MatriculaAlunoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/matriculas-alunos")
-public class MatrciulaAlunoController {
+public class MatriculaAlunoController {
 
 
     @Autowired
@@ -23,6 +24,13 @@ public class MatrciulaAlunoController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void trancarMatricula(@PathVariable Long id) {
         matriculaAlunoService.trancarMatricula(id);
+    }
+
+    @PatchMapping("/atualiza-notas/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void atualizaNotas(@RequestBody AtualizarNotasRequest atualizarNotasRequest, @PathVariable Long id)
+    {
+        matriculaAlunoService.atualizaNotas(id, atualizarNotasRequest);
     }
 
 }

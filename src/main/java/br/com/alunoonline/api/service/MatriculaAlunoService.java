@@ -1,6 +1,7 @@
 package br.com.alunoonline.api.service;
 
-import br.com.alunoonline.api.controller.enums.MatriculaAlunoStatusEnum;
+import br.com.alunoonline.api.dtos.AtualizarNotasRequest;
+import br.com.alunoonline.api.enums.MatriculaAlunoStatusEnum;
 import br.com.alunoonline.api.model.MatriculaAluno;
 import br.com.alunoonline.api.repository.MatriculaAlunoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class MatriculaAlunoService {
+
+    public static final double MEDIA_PARA_APROVACAO = 7.0;
 
     @Autowired
     MatriculaAlunoRepository matriculaAlunoRepository;
@@ -41,5 +44,34 @@ public class MatriculaAlunoService {
         matriculaAlunoRepository.save(matriculaAluno);
     }
 
+    public void atualizaNotas(Long matriculaAlunoId,
+                              AtualizarNotasRequest atualizarNotasRequest) {
+        MatriculaAluno matriculaAluno =
+                matriculaAlunoRepository.findById(matriculaAlunoId)
+                        .orElseThrow(() ->
+                                new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                        "Matricula Aluno não encontrada!"));
+
+        if (atualizarNotasRequest.getNota1() != null) {
+            matriculaAluno.setNota1(atualizarNotasRequest.getNota1());
+        }
+
+        if (atualizarNotasRequest.getNota2() != null) {
+            matriculaAluno.setNota2(atualizarNotasRequest.getNota2());
+        }
+
+        calculaMedia(matriculaAluno);
+        matriculaAlunoRepository.save(matriculaAluno);
+
+    }
+    private void calculaMedia(MatriculaAluno matriculaAluno) {
+        Double nota1 = matriculaAluno.getNota1();
+        Double nota2 = matriculaAluno.getNota2();
+
+        if (nota1 != null && nota2 != null) {
+            Double media = (nota1 + nota2) / 2;
+            matriculaAluno.setStatus(media >= MEDIA_PARA_APROVACAO ? MatriculaAlunoStatusEnum.APROVADO : MatriculaAlunoStatusEnum.REPROVADO);
+        }
+    }
 
 }
