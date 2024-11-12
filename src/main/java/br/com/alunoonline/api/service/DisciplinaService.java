@@ -53,7 +53,10 @@ public class DisciplinaService {
         // COM O ALUNO TOTALMENTE EDITADO ACIMA
         // EU DEVOLVO ELE EDITADO/ATUALIZADO PARA O BANCO DE DADOS
         disciplinaRepository.save(disciplinaEditada);
-
-
     }
+
+    public List<Disciplina> listarDisciplinasDoProf(Long professorId){
+        return disciplinaRepository.findByProfessorId(professorId);
+    }
+
 }
