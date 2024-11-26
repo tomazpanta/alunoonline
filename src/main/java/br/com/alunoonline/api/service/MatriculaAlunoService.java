@@ -49,34 +49,30 @@ public class MatriculaAlunoService {
         matriculaAlunoRepository.save(matriculaAluno);
     }
 
-    public void atualizaNotas(Long matriculaAlunoId,
-                              AtualizarNotasRequest atualizarNotasRequest) {
-        MatriculaAluno matriculaAluno =
-                matriculaAlunoRepository.findById(matriculaAlunoId)
-                        .orElseThrow(() ->
-                                new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                        "Matricula Aluno não encontrada!"));
+    private Double calculaMedia(Double nota1, Double nota2) {
+        if (nota1 != null && nota2 != null) {
+            return (nota1 + nota2) / 2.0;
+        }
+        return null;
+    }
+
+    public void atualizaNotas(Long matriculaAlunoId, AtualizarNotasRequest atualizarNotasRequest) {
+        MatriculaAluno matriculaAluno = matriculaAlunoRepository.findById(matriculaAlunoId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Matricula Aluno não encontrada!"));
 
         if (atualizarNotasRequest.getNota1() != null) {
             matriculaAluno.setNota1(atualizarNotasRequest.getNota1());
         }
-
         if (atualizarNotasRequest.getNota2() != null) {
             matriculaAluno.setNota2(atualizarNotasRequest.getNota2());
         }
 
-        calculaMedia(matriculaAluno);
-        matriculaAlunoRepository.save(matriculaAluno);
-
-    }
-    private void calculaMedia(MatriculaAluno matriculaAluno) {
-        Double nota1 = matriculaAluno.getNota1();
-        Double nota2 = matriculaAluno.getNota2();
-
-        if (nota1 != null && nota2 != null) {
-            Double media = (nota1 + nota2) / 2;
+        Double media = calculaMedia(matriculaAluno.getNota1(), matriculaAluno.getNota2());
+        if (media != null) {
             matriculaAluno.setStatus(media >= MEDIA_PARA_APROVACAO ? MatriculaAlunoStatusEnum.APROVADO : MatriculaAlunoStatusEnum.REPROVADO);
         }
+
+        matriculaAlunoRepository.save(matriculaAluno);
     }
 
     public HistoricoAlunoResponse emitirHistorico(Long alunoId) {
@@ -100,26 +96,17 @@ public class MatriculaAlunoService {
             disciplinasAlunoResponse.setNota1(matriculaAluno.getNota1());
             disciplinasAlunoResponse.setNota2(matriculaAluno.getNota2());
 
-
-            // não quero isso nesse método, Mas eu (prof) vou fazer
-            // se possível reutilize o método calcula média acima
-            // refatore ele
-
-            if (matriculaAluno.getNota1() != null && matriculaAluno.getNota2() != null) {
-                disciplinasAlunoResponse.setMedia(matriculaAluno.getNota1() + matriculaAluno.getNota2() / 2.0);
-            } else {
-                disciplinasAlunoResponse.setMedia(null);
-            }
-
+            Double media = calculaMedia(matriculaAluno.getNota1(), matriculaAluno.getNota2());
+            disciplinasAlunoResponse.setMedia(media);
             disciplinasAlunoResponse.setStatus(matriculaAluno.getStatus());
 
             disciplinasList.add(disciplinasAlunoResponse);
-
         }
 
         historicoAluno.setDisciplinasAlunoResponses(disciplinasList);
 
         return historicoAluno;
     }
+
 
 }
